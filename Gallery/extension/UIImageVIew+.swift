@@ -10,16 +10,18 @@ import UIKit
 
 extension UIImageView {
     
-    func setImage(from urlStr: String) {
-        ImageLoader(url: urlStr).load { result in
-            DispatchQueue.main.async {
-                switch result {
-                case .success(let image):
-                    ImageCachingManager.shared.cachingList[urlStr] = image
-                    self.image = image
-                case .failure(let error):
-                    print(error.localizedDescription)
+    func setImage(from image: GalleryImage) {
+        let link = image.link
+        ImageLoader(url: link).load { result in
+            switch result {
+            case .success(let _image):
+                ImageCachingManager.shared.cachingList[link] = _image
+                let size = CGSize(width: Int(image.width)!, height: Int(image.height)!)
+                if let resized = _image.resizedImage(targetSize: size) {
+                    self.image = resized
                 }
+            case .failure(let error):
+                print(error.localizedDescription)
             }
         }
     }

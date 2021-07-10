@@ -120,6 +120,10 @@ class GalleryViewController:
     }
     
     
+    // 3분할 하는게....   구글링을 못하니까 기억이 안나네요 ㅠㅠㅠ
+    // 어떤 Delegate 메서드에서 했었는지가.. ㅠㅠㅠ
+    
+    
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return viewModel.getDataCount()
     }
@@ -133,7 +137,7 @@ class GalleryViewController:
                 if let image = ImageCachingManager.shared.cachingList[data.link] {
                     cell.imageView.image = image
                 } else {
-                    cell.imageView.setImage(from: data.link)
+                    cell.imageView.setImage(from: data)
                 }
                 return cell
             }
@@ -144,7 +148,7 @@ class GalleryViewController:
                 if let image = ImageCachingManager.shared.cachingList[data.link] {
                     cell.imageView.image = image
                 } else {
-                    cell.imageView.setImage(from: data.link)
+                    cell.imageView.setImage(from: data)
                 }
                 return cell
             }

@@ -14,9 +14,7 @@ class GalleryViewModel: NSObject {
     private var galleryData: [GalleryImage] = []
     
     var reloadClosure: ((GalleryError?, String?) -> Void)?
-    
     var hasNextPage = true
-    
     
     func fetchImages(start: Int) {
         

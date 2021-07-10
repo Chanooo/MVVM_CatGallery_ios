@@ -18,21 +18,30 @@ struct ImageLoader {
     /// 함수의 parameter 또한 자유롭게 추가/수정 가능
     func load(completion: @escaping (Result<UIImage, ImageLoaderError>) -> Void) {
         if let url = URL(string: self.url) {
-            URLSession.shared.dataTask(with: url) { data, response, error in
-                guard (response as? HTTPURLResponse)?.statusCode == 200,
-                      error == nil,
-                      let data = data,
-                      let image = UIImage(data: data) else {
-                    completion(.failure(.unknown))
-                    return
-                }
+            
+            DispatchQueue.global(qos: .background).async {
+                URLSession.shared.dataTask(with: url) { data, response, error in
+                    guard (response as? HTTPURLResponse)?.statusCode == 200,
+                          error == nil,
+                          let data = data,
+                          let image = UIImage(data: data) else {
+                        DispatchQueue.main.async {
+                            completion(.failure(.unknown))
+                        }
+                        return
+                    }
 
-                completion(.success(image))
-
-                // ----- 코드 수정 제한 영역 시작 -----
-                NotificationCenter.default.post(name: .init("DownloadImageDidFinish"), object: nil)
-                // ----- 코드 수정 제한 영역 끝 -----
-            }.resume()
+                    DispatchQueue.main.async {
+                        completion(.success(image))
+                        
+                        // ----- 코드 수정 제한 영역 시작 -----
+                        NotificationCenter.default.post(name: .init("DownloadImageDidFinish"), object: nil)
+                        // ----- 코드 수정 제한 영역 끝 -----
+                    }
+                }.resume()
+            }
+            
+            
         } else {
             completion(.failure(.invalidURL))
         }
